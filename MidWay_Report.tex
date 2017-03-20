@@ -1,0 +1,211 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in,includefoot]{geometry}
+\bibliographystyle{plain}
+
+
+\begin{document}
+
+	\begin{center}
+	\line(1,0){400}\\
+	[0.2in]
+	\huge{\bfseries How high will it hit?}\\
+	\line(1,0){400}\\[1cm]
+	
+	
+	
+	
+	\end{center}
+	\begin{center}
+	\textsc{Abhimanyu Jataria, ajatari@ncsu.edu\\}
+	\textsc{Bharat Mukheja, bkmukhej@ncsu.edu\\}
+	\textsc{Gowtham Durairaj, gramesh3@ncsu.edu\\[0.2cm]}
+	Department Of Computer Science\\[0.2cm]
+	{\bfseries\large North Carolina State University\\[1in]}
+	
+	\end{center}
+\section{Background and Introduction}\label{sec:intro}
+
+	Online Content providers, especially on-demand streaming media services face a crucial problem when they recommend a media(video media, for example) to a user. For every content that is recommended, it has to be of interest to the user for best results(subscription/watching), and it varies based on the type of user. For a new user, the content has to be such that it appeals to vast majority of people, because the probability of new user liking it would be high. For an old user, the content has to be such that it appeals most to the user's taste. Usually these services have personal/profile data and viewing history about the old users, but content recommendation tailored to individual user is still a complex problem. 
+
+
+	We are interested in determining how much would a content be liked by a user(old user, likeness determined in the form of rating the user gives) based on user's past history and similarity of the content with the historic viewings.	By doing this, we plan to target two problems - Firstly, this helps the recommendation systems as described above. Secondly, this helps prediction of movie success in future, which helps future productions plan ahead of their projects by amalgamating the best promising features among the production assets. A good example of such is the astounding success of carefully crafted project of 'House of Cards(US Version)' for which data processing had given a huge Go ahead by promising success, which later reflected in the box office collections.
+
+
+\subsection{Data}
+For this project, we used two data sets, Netflix and IMDb as described below.
+
+
+	1. Netflix - Netflix dataset provides a set of collections of movie ratings data collected from users of Netflix. The data provides movie titles, movie release date, movie watched date, and rating given by the user.
+	
+	
+	2. IMDb - IMDb is an online database of information related to movies, television shows, actors and production crew. Information is stored in lists and can be fetched via OMDb API. The dataset contains but is not limited to director's names, actor's names, genre and so on.
+
+	We loaded, cleaned, filtered and merged the data to create a movie dataset with all the important attributed related to a movie.
+	
+\subsection{Methods(Proposed and Implemented)}
+	We start out by dividing our project implementation in two parts - Non-User specicfic precition, and User-specific prediction as follows - \\
+	
+	{\bfseries a. Non-User specicfic prediction :-} 
+		Implement the proposed method over the movie list, using the average ratings of the movie as rating parameter. Divide the dataset into 70\%-30\% for the purpose of error calculation. Use the algorithm and dataset in the end to extend it to user specific prediction.
+		
+	{\bfseries b. User specific prediction :-} 
+		Implement the algorithms created in the previous prediction on a per user basis, while replacing the average movie rating with  user specific rating, and using movies only seen by user.
+		
+For both of the above portions, we plan to use the following methods for classification and prediction - 	
+
+	{\bfseries 1. Baseline Rating using Mode of ratings :-} 
+		Mode is a very simple means of finding out the trend of data. 
+		We have used it on the dataset to set a starting benchmark of rating prediction. We find the Mode of the rating chart of the clean dataset and set it as a prediction for rms calculation. We will use this as a starting for calculating improvements by other methods and as a baseline method for rating prediction.
+	
+	{\bfseries 2. Naive Bayes :-} 
+		Bayes classifier is a statistical classifier that predicts class membership probabilities such as the probability that a given tuple belongs to a particular class. It is a robust classifier with respect to missing feature values, which make it well suited to the task of rating prediction.
+		
+	{\bfseries 3. KNN :-} 
+		The k-Nearest Neighbors algorithm (or k-NN for short) is a non-parametric method used for classification and regression. In both cases, the input consists of the k closest training examples in the feature space.[Ref: 'https://en.wikipedia.org/wiki/K-nearest\_neighbors\_algorithm']
+		
+	{\bfseries 1. Baseline Rating using Mode of ratings :-} 
+		A decision tree is a decision support tool that uses a tree-like graph or model of decisions and their possible consequences, including chance event outcomes, resource costs, and utility.[Ref: 'https://en.wikipedia.org/wiki/Decision\_tree']
+		
+\section{Related Work}
+\subsection{Data Integration}
+	The IMDb data and Netflix data are two different sources of Movies Data. IMDb has the following attributes:-\\
+Genre, Title, Rated, Type, imdbRating, Runtime, Director, Writer, Actors, Plot, Language, Country, Awards, Metascore, imdbVotes and imdbID.\\
+Netflix has the following:-\\
+Title, Release, Watched and Rating.
+
+
+For our purpose, the attributes of Genre and Production crew are important clustering attributes, so we decided to unify these sources and create a common database of movies for our purpose. Since both of them has long list of movies, we selected the titles present in both. There are two common and intersecting fields in both the datasets i.e. 'Title' and 'Release Date'. Title serves as the lookup attribute for commonality in two datas, and release data as a validation attribute. There are however some exclusive entries in the each dataset which we have not included in the working set.\\Entries in NetFlix - 17,770 movies\\Entries in IMDB - Endless(Growing Data)\\Intersection Entries - 10,456\\
+
+\subsection{Data Reduction}
+Data reduction is the transformation of numerical or alphabetical digital information derived empirically or experimentally into a corrected, ordered, and simplified form. The basic concept is the reduction of multitudinous amounts of data down to the meaningful parts.
+
+
+
+    {\bfseries (i) Cleaning :-}
+    
+    The Compiled set still has a lot of unusable instances - some of the entries have data unable from IMDb, and also a lot of attributes which serve no function in prediction. These have been removed so as to retain the usability of data.\\Intersection Entries - 10,456\\
+    Cleaning Data - 9,164\\
+    
+    
+    
+    {\bfseries (ii) Sampling :-}
+    
+    The number of users in Netflix dataset is too large(~480 thousand users) to be processed on portable machine used by students. Hence, we sampled the dataset a workable number of users. First condition of sampling was to only include users with count of movies watched more than 50, to have a sizeable list for Cross Validation. Secondly, the maximum size of such list should be 10000 users.\\
+    Given number of users ~480 thousand\\ Sample list - 9001 users\\
+    
+    {\bfseries (iii) Data Transformation :-}
+    
+    Matlab doesnt understand the string values for the data. So it has to be converted into numeric form which is accepted. We used a hashmap to convert strings to numerics in such a way that the hashmap also stored the mean of the ratings, hence the classes with the same mean ratings fell under same new class by default without any new computational complexity. For example,
+    		Under Actors - With multiple actors in a movie, there were 9088 classes, after using the mean hash map as above, the number of classes remaining is 33. This helped both in reduction of number of classes, as well as making data valid for matlab.
+
+
+
+\section{Experiments & Results}
+
+\subsection{Baseline Rating using Mode of ratings}
+Using the Mode baseline, we have got the RMS of 0.7435(rating).
+
+
+\subsection{Decision Tree for Non-User movie rating prediction}
+
+By using Decision Tree, we have got an RMS of 0.3454 and an accuracy of 0.8905. This amounts to a 53\% improvement over baseline.
+
+The Precision \& Recall for movie rating(ranging 2-9) based on Decision Tree is as follow:-
+	\begin{table}[h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|l|l|l|}
+	\hline
+	Rating & 2 & 3 & 4 & 5 & 6 & 7 & 7 & 9\\
+	\hline
+	Precision & 100 & 88.9 & 91.2 & 87.7 & 84.9 & 87.1 & 93.6 & 100\\
+	\hline
+    Recall & 71.4 & 88.9 & 88.6 & 87.7 & 87.4 & 91.9 & 90.2 & 72.2\\
+	\hline
+	
+	\end{tabular}
+	\end{table}
+
+
+
+
+
+\subsection{K Nearest Neighbour for Non-User movie rating prediction}
+
+The k-Nearest Neighbors algorithm (or k-NN for short) is a non-parametric method used for classification and regression. In both cases, the input consists of the k closest training examples in the feature space.
+			By using the KNN, we have got an RMS of 0.6106 and an accuracy of 0.6999.This means an 18\% improvement over baseline.
+
+
+
+The Precision \& Recall table for movie rating(ranging 2-9) based on KNN is as follows:-\\
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|l|l|l|}
+	\hline
+	Rating & 2 & 3 & 4 & 5 & 6 & 7 & 7 & 9\\
+	\hline
+	Precision & 66.7 & 69.2 & 68.1 & 75.7 & 70.2 & 68.5 & 72.6 & 47.2\\
+	\hline
+    Recall & 28.6 & 50.0 & 70.0 & 72.6 & 74.7 & 74.9 & 68.3 & 27\\
+	\hline
+	
+	\end{tabular}
+	\end{table}
+
+
+
+
+
+
+\subsection{Naive Bayes for Non-User movie rating prediction}
+
+Bayes classifier is a statistical classifier that predicts class membership probabilities such as the probability that a given tuple belongs to a particular class. It is a robust classifier with respect to missing feature values, which make it well suited to the task of rating prediction.
+		    Applying the Naive Bayes method, has given us an RMS of 0.4432 and an accuracy of 0.8545. 
+This means a 40\% improvement over baseline.
+
+
+The Precision \& Recall table for movie rating(ranging 2-9) based on Naive Bayes is as follows:- 
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|l|l|l|}
+	\hline
+	Rating & 2 & 3 & 4 & 5 & 6 & 7 & 7 & 9\\
+	\hline
+	Precision & 100 & 95.7 & 81.94 & 85.5 & 81.3 & 81.4 & 93.4 & 96.6\\
+	\hline
+	Recall & 28.6 & 61.1 & 84.3 & 80.8 & 87.4 & 90.3 & 84.3 & 67.5\\
+	\hline
+
+	\end{tabular}
+	\end{table}
+
+
+\section{Conclusion}
+
+Based on the above experiments performed we conclude that out of Naive Bayes , Decision Tree and K Nearest Neighbour, Decision Tree algorithm is most perfect with accuracy of 89.05 and rms error of 0.3454.
+
+
+\section{Future Steps}
+For our next step, we plan to complete the Per-User rating prediction using the above four methods. But first we'd look to restructure our data because we are planning to use the NB and SVM algorithm for each and every user, thus effectively running the same code ~10000 times. To do this, we need to have the list of movies each user has watched. To start with, we have the list in the opposite manner - the list of users who watched a given movie.\\
+
+\bibliography{References}
+\section{Reference}
+https://github.com/iaperez/DataMiningProject-WhoMadeThatMovie/blob/master/Report.pdf\\
+https://www.omdbapi.com\\
+https://www.wikipedia.com\\
+www.netflilx.com\\
+www.imdb.com\\
+
+\appendix
+\section{Change from Previous Plan}
+There are two main changes which we have done from the first project plan submitted on Oct 11. None of them have any impact on the results or improvements of this experiment though.
+
+	{\bfseries 1.} First, we have shifted our first phase of project from using Netflix Data given by professor, to Movie data(Feature Extraction) done from the Internet. 
+
+	{\bfseries 2.} Second, we have used Decision Tree instead of ANN.
+	
+	This was done firstly, to increase the number of workable attributes and have a better prediction, and secondly, to make the project feasible to be performed on student computing machines. The original dataset had ~480k users with only 2 attributes, which was not a feasible project, and especially not a learning one as the number of usable methods was quite less and thus it didnt resonate well with the course taught in class. By increasing the number of attributes in movies, we have the option to implement almost all the methods taught in class.
+	
+    The project activities performed by each member remain the same, hence not including here.
+\end{document}
